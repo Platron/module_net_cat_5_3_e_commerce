@@ -12,7 +12,7 @@ class nc_payment_system_platron extends nc_payment_system {
     protected $automatic = TRUE;
 
     // принимаемые валюты
-    public $accepted_currencies = array('USD', 'EUR', 'RUB');
+    public $accepted_currencies = array('USD', 'EUR', 'RUB', 'RUR');
 
     // параметры сайта в платежной системе
     protected $settings = array(
@@ -137,7 +137,8 @@ class nc_payment_system_platron extends nc_payment_system {
 		$arrResponse = array();
 		@$nInvoiceStatus = $invoice->status;
 		
-		if($arrRequest['type'] == 'check'){
+		$requestType = $_GET['type'];
+		if($requestType == 'check'){
 			$bCheckResult = 1;
 			if(!$invoice && !in_array($nInvoiceStatus, array(nc_payment_invoice::STATUS_NEW, nc_payment_invoice::STATUS_SENT_TO_PAYMENT_SYSTEM, nc_payment_invoice::STATUS_WAITING))){
 				$bCheckResult = 0;
@@ -156,7 +157,7 @@ class nc_payment_system_platron extends nc_payment_system {
 			$objResponse->addChild('pg_sig', $arrResponse['pg_sig']);
 			
 		}
-		elseif($arrRequest['type'] == 'result'){
+		elseif($requestType == 'result'){
 			if(!$invoice && !in_array($nInvoiceStatus, array(nc_payment_invoice::STATUS_NEW, nc_payment_invoice::STATUS_SENT_TO_PAYMENT_SYSTEM, nc_payment_invoice::STATUS_WAITING))){
 				$strResponseDescription = "Товар не доступен. Либо заказа нет, либо его статус ".$nInvoiceStatus;
 				if($arrRequest['pg_can_reject'] == 1)
@@ -184,7 +185,7 @@ class nc_payment_system_platron extends nc_payment_system {
 			$objResponse->addChild('pg_salt', $arrRequest['pg_salt']); // в ответе необходимо указывать тот же pg_salt, что и в запросе
 			$objResponse->addChild('pg_status', $strResponseStatus);
 			$objResponse->addChild('pg_description', $strResponseDescription);
-			$objResponse->addChild('pg_sig', PG_Signature::makeXML($thisScriptName, $objResponse, $this->secret_key));
+			$objResponse->addChild('pg_sig', PG_Signature::makeXML($thisScriptName, $objResponse, $this->get_setting('secret_key')));
 		} 
 		else 
 			exit("Wrong type request");
