@@ -12,7 +12,8 @@ class nc_payment_system_platron extends nc_payment_system {
     protected $automatic = TRUE;
 
     // принимаемые валюты
-    public $accepted_currencies = array('USD', 'EUR', 'RUB', 'RUR');
+    protected $accepted_currencies = array('USD', 'EUR', 'RUB', 'RUR');
+    protected $currency_map = array('RUR' => 'RUB');
 
     // параметры сайта в платежной системе
     protected $settings = array(
@@ -39,10 +40,7 @@ class nc_payment_system_platron extends nc_payment_system {
      *
      */
     public function execute_payment_request(nc_payment_invoice $invoice) {
-		$strCurrency = $invoice->get_currency();
-		if ($strCurrency == 'RUR') {
-			$strCurrency = 'RUB';
-		}
+		$strCurrency = $this->get_currency_code($invoice->get_currency());
 		if (!in_array($strCurrency, $this->accepted_currencies))
 			$this->add_error(nc_payment_system_platron::ERROR_CURRENCY);
 		
