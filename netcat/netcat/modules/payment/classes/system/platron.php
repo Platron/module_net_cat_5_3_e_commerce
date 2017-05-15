@@ -39,7 +39,10 @@ class nc_payment_system_platron extends nc_payment_system {
      *
      */
     public function execute_payment_request(nc_payment_invoice $invoice) {
-		$strCurrency = $invoice->get_currency();		
+		$strCurrency = $invoice->get_currency();
+		if ($strCurrency == 'RUR') {
+			$strCurrency = 'RUB';
+		}
 		if (!in_array($strCurrency, $this->accepted_currencies))
 			$this->add_error(nc_payment_system_platron::ERROR_CURRENCY);
 		
