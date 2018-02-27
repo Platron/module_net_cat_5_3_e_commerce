@@ -253,7 +253,7 @@ class nc_payment_system_platron extends nc_payment_system {
             $receipt_item->price = round($delivery_estimate->get('full_price'), 2);
             $receipt_item->quantity = 1;
             $receipt_item->amount = round($delivery_estimate->get('full_price'), 2);
-            $receipt_item->vat = 18;
+            $receipt_item->vat = ($this->get_setting('ofd_vat') === 'none' ? 'none' : '18');
             $receipt_items[] = $receipt_item;
         }
 
